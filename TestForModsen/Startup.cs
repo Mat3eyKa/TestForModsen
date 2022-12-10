@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,14 +11,13 @@ using System;
 using System.Text;
 using TestForModsen.Data;
 using TestForModsen.Data.Auth;
-using TestForModsen.Models;
+using TestForModsen.Interfaces;
 
 namespace TestForModsen
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration) =>
             Configuration = configuration;
 

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TestForModsen.Data;
+using TestForModsen.Interfaces;
 using TestForModsen.Models;
 
 namespace TestForModsen.Controllers
@@ -11,17 +13,14 @@ namespace TestForModsen.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class HomeController : ControllerBase
+    public class HomeController : ControllerBase, IHome
     {
         private readonly ModsenContext db;
         public HomeController(ModsenContext database) =>
             db = database;
 
         [HttpGet]
-        public IQueryable<Event> Get()
-        {
-            return db.Events;
-        }
+        public IQueryable<Event> Get() => db.Events;
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Event>> Get(int id)
@@ -36,15 +35,23 @@ namespace TestForModsen.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Event even)
         {
-            await db.Events.AddAsync(even);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.Events.AddAsync(even);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
             return Ok();
         }
 
         [HttpPut]
         public async Task<ActionResult> Edit(Event even)
         {
-            if (even.Id is 0)
+            if (!await db.Events.AnyAsync(x => x.Id == even.Id))
                 return BadRequest();
 
             db.Entry(even).State = EntityState.Modified;

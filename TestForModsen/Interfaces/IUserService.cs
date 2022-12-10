@@ -1,6 +1,6 @@
 ﻿using TestForModsen.Models;
 
-namespace TestForModsen.Data.Auth
+namespace TestForModsen.Interfaces
 {
     public interface IUserService
     {

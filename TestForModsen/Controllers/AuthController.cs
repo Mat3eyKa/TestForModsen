@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -7,8 +6,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TestForModsen.Data;
-using TestForModsen.Data.Auth;
+using TestForModsen.Interfaces;
 using TestForModsen.Models;
 
 namespace TestForModsen.Controllers
@@ -19,20 +17,16 @@ namespace TestForModsen.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
-        private readonly ModsenContext db;
 
-        public AuthController(IConfiguration configuration, IUserService userService, ModsenContext authContext) =>
-           (_configuration, _userService, db) = (configuration, userService, authContext);
+        public AuthController(IConfiguration configuration, IUserService userService) =>
+           (_configuration, _userService) = (configuration, userService);
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Auth([FromBody] LoginModel data)
-        {
-            if (_userService.IsValidUserInformation(data))
-                return Ok(new { Token = GenerateJwtToken(data.UserName), Message = "Success" });
-
-            return BadRequest("Not valid Username or Password");
-        }
+        public IActionResult Auth([FromBody] LoginModel data) =>
+            _userService.IsValidUserInformation(data) ?
+            Ok(new { Token = GenerateJwtToken(data.UserName), Message = "Success" }) :
+            BadRequest("Not valid Username or Password");
 
         private string GenerateJwtToken(string id)
         {

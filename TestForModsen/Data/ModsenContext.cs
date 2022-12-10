@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TestForModsen.Models;
 
 namespace TestForModsen.Data
 {
-    public class ModsenContext : IdentityDbContext
+    public class ModsenContext : DbContext
     {
         public ModsenContext(DbContextOptions<ModsenContext> options)
             : base(options) { Database.EnsureCreated(); }
-        public DbSet<Event> Events {get; set;}
+        public DbSet<Event> Events { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
